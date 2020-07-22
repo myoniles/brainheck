@@ -1,25 +1,46 @@
+%code requires {
+	#define DEFAULT_MEM 30000
+}
+
 %{
 #include <stdio.h>
 
 int yylex();
 void yyerror(const char* s);
 extern int yylineno;
+
+char mem[30000] = {0};
+char* ptr = mem;
+
+void printbyte(char a){
+	int i;
+  for (i = 0; i < 8; i++) {
+      printf("%d", !!((a << i) & 0x80));
+  }
+}
 %}
 
 %start Program
 
-%token INC DEC FOR END PRINT READ MEMOP
+%token INC DEC FOR END PRINT READ LEFT RIGHT
 
 %%
-Program: MEMOP StatementList
-	| StatementList
+Program: StatementList;
+StatementList: StatementList Statement
+	|
 	;
-StatementList: StatementList Statement |;
 Statement
-	: INC
-	| DEC
-	| READ
-	| PRINT
+	: INC {++(*ptr);}
+	| DEC {--(*ptr);}
+	| READ {*ptr = getchar();}
+	| PRINT {printf("print: %c", *ptr);}
+	| LEFT  {++ptr;}
+	| RIGHT {--ptr;}
+	| Loop
+	;
+Loop
+	: FOR END
+	| FOR Statement	END
 	;
 %%
 extern FILE* yyin;
@@ -27,7 +48,7 @@ main( int argc, char** argv)
 {
   FILE *myfile = fopen(argv[1], "r");
   if (!myfile)
-  return(yyparse());
+  	return(yyparse());
   yyin = myfile;
   do { yyparse();} while(!feof(yyin));
 }
