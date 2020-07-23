@@ -6,11 +6,24 @@
 %option yylineno
 %%
 
-\n {}
-"+" { return INC; }
-"-" { return DEC; }
-">" { return LEFT; }
-"<" { return RIGHT; }
+[\t\n ] {}
+
+"+" {
+	yylval.value = 1;
+	return INC;
+}
+"-" {
+	yylval.value = -1;
+	return DEC;
+}
+">" {
+	yylval.value = 1;
+	return RIGHT;
+}
+"<" {
+	yylval.value = -1;
+	return LEFT;
+}
 "[" { return FOR; }
 "]" { return END; }
 "." { return PRINT; }

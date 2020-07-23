@@ -1,37 +1,55 @@
-class ASTNode{
+#ifndef AST_H
+#define AST_H
+
+class AstNode{
 	public:
 		int lineno;
 
-		AstNode( AstNode* leftNode, AstNode* rightNode);
 		AstNode();
+		AstNode( AstNode* leftNode, AstNode* rightNode);
 
-		virtual void traverse();
-
-		AstNode* setLeftChild();
-		AstNode* setRightChild();
-		AstNode* setLineno();
+		virtual void traverse() = 0;
+		void setLeftChild( AstNode* node );
+		void setRightChild( AstNode* node );
+		void setLineno(int i);
 
 	protected:
-		ASTNode* leftChild;
-		ASTNode* rightChild;
+		AstNode* leftChild;
+		AstNode* rightChild;
 };
 
 enum AstOp {
 	val_delta,
 	pos_delta,
 	print,
-	read
-}
+	readc
+};
 
-class ASTExpressionNode : public ASTNode {
+class AstExpressionNode : public AstNode {
 	public:
-		ASTExpressionNode( AstOp op );
+		AstExpressionNode( );
+		AstExpressionNode( AstOp op );
+		AstExpressionNode( AstOp op , int val );
+		void traverse();
+
+	protected:
+		AstOp op;
+		int val;
+};
+
+class AstListNode : public AstNode {
+	public:
+		AstListNode( );
+		AstListNode( AstNode* exp, AstListNode* next);
 		void traverse();
 };
 
-class ASTListNode : public ASTNode {
+class AstLoopNode: public AstNode {
 	public:
-		ASTListNode( ASTExpressionNode* exp, ASTListNode* next);
+		AstLoopNode( AstListNode* inside );
 		void traverse();
+	private:
+		AstListNode* inside;
 };
 
+#endif

@@ -1,10 +1,19 @@
 #include "AST.h"
+#include <cstddef>
+#include <stdio.h>
 
 #ifndef AST
 #define AST
 
 void yyerror(const char* s);
-char* ptr, mem;
+//char* ptr, mem;
+
+char mem[30000] = {0};
+char* ptr = mem;
+
+void status_update(){
+	printf("current ptr:\t%p,\tcurrent *ptr:\t%d\n", ptr, *ptr);
+}
 
 AstNode::AstNode(AstNode* leftNode, AstNode* rightNode)
 {
@@ -33,36 +42,78 @@ void AstNode::setRightChild( AstNode* node )
   this->rightChild = node;
 }
 
-ASTListNode::ASTListNode(ASTExpressionNode* exp, ASTListNode* next) :
-ASTNode(exp, next){
-
+AstListNode::AstListNode()
+:AstNode()
+{
+  this->leftChild =  NULL;
+  this->rightChild = NULL;
 }
 
-void ASTListNode::traverse(){
-	leftChild ->traverse();
+
+AstListNode::AstListNode(AstNode* exp, AstListNode* next) :
+AstNode(exp, next){
+}
+
+void AstListNode::traverse(){
 	if ( rightChild )
-		rightChild->traverse()
+		rightChild->traverse();
+	leftChild ->traverse();
 }
 
-ASTExpressionNode::ASTExpressionNode(AstOp op) :
-ASTNode(){
-
+AstExpressionNode::AstExpressionNode()
+:AstNode()
+{
+  this->leftChild =  NULL;
+  this->rightChild = NULL;
 }
 
-void ASTExpressionNode::traverse(){
+AstExpressionNode::AstExpressionNode(AstOp op) :
+AstNode(){
+	this->op = op;
+	this->val = 0;
+}
+
+AstExpressionNode::AstExpressionNode(AstOp op, int val) :
+AstNode(){
+	this->op = op;
+	this->val = val;
+}
+
+void printbyte(char a){
+	int i;
+	for (i = 0; i < 8; i++) {
+			printf("%d", !!((a << i) & 0x80));
+	}
+	printf(" ");
+}
+
+void AstExpressionNode::traverse(){
 	switch (op){
 		case val_delta:
-			*ptr;
+			*ptr += val;
 			break;
 		case pos_delta:
+			ptr += val;
 			break;
 		case print:
-			printf("print: %c", *ptr);
+			//printbyte(*ptr);
+			printf("%c", *ptr);
 			break;
-		case read:
+		case readc:
 			*ptr = getchar();
 			break;
-		default:
+	}
+	//status_update();
+}
+
+AstLoopNode::AstLoopNode(AstListNode* inside):AstNode(){this->inside = inside;}
+
+void AstLoopNode::traverse(){
+	if (inside==NULL)
+		return;
+	char* og_ptr = ptr;
+	while(*ptr){
+		inside->traverse();
 	}
 }
 

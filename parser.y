@@ -1,5 +1,6 @@
 %code requires {
 	#define DEFAULT_MEM 30000
+	#include "AST.h"
 }
 
 %{
@@ -9,37 +10,48 @@ int yylex();
 void yyerror(const char* s);
 extern int yylineno;
 
-char mem[30000] = {0};
-char* ptr = mem;
-
-void printbyte(char a){
-	int i;
-	for (i = 0; i < 8; i++) {
-			printf("%d", !!((a << i) & 0x80));
-	}
-}
 %}
+
+%union{
+	int value;
+	AstListNode* list;
+	AstNode* exp;
+}
 
 %start Program
 
 %token INC DEC FOR END PRINT READ LEFT RIGHT
 
+%type <value> INC DEC LEFT RIGHT Pos Val
+%type <list> StatementList
+%type <exp> Statement Loop
+
 %%
-Program: StatementList;
-StatementList: StatementList Statement
-	|
+Program: StatementList{
+	if ($1 != NULL)
+		$1->traverse();
+	}
+	;
+StatementList: StatementList Statement { $$ = new AstListNode($2, $1); }
+	| {$$=NULL;}
 	;
 Statement
+	: READ	{ $$ = new AstExpressionNode(readc); }
+	| PRINT { $$ = new AstExpressionNode(print); }
+	| Pos   { $$ = new AstExpressionNode(pos_delta, $1); }
+	| Val   { $$ = new AstExpressionNode(val_delta, $1); }
+	| Loop
+	;
+Pos
 	: LEFT
 	| RIGHT
-	| INC
+	;
+Val
+	: INC
 	| DEC
-	| Loop
-	| READ	{}
-	| PRINT {}
 	;
 Loop
-	: FOR StatementList	END
+	: FOR StatementList	END {$$ =  new AstLoopNode($2); }
 	;
 %%
 extern FILE* yyin;

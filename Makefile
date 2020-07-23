@@ -4,7 +4,7 @@ all: clean flex bison brainheck
 brainheck: clean flex bison comp
 
 comp:
-	g++ -g scanner.cpp parser.cpp -o parser
+	g++ -g scanner.cpp parser.cpp -o interpreter AST.cpp
 flex:
 	flex -o scanner.cpp ${FLEXFILE}
 bison:
