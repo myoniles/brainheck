@@ -14,9 +14,9 @@ char* ptr = mem;
 
 void printbyte(char a){
 	int i;
-  for (i = 0; i < 8; i++) {
-      printf("%d", !!((a << i) & 0x80));
-  }
+	for (i = 0; i < 8; i++) {
+			printf("%d", !!((a << i) & 0x80));
+	}
 }
 %}
 
@@ -30,32 +30,31 @@ StatementList: StatementList Statement
 	|
 	;
 Statement
-	: INC {++(*ptr);}
-	| DEC {--(*ptr);}
-	| READ {*ptr = getchar();}
-	| PRINT {printf("print: %c", *ptr);}
-	| LEFT  {++ptr;}
-	| RIGHT {--ptr;}
+	: LEFT
+	| RIGHT
+	| INC
+	| DEC
 	| Loop
+	| READ	{}
+	| PRINT {}
 	;
 Loop
-	: FOR END
-	| FOR Statement	END
+	: FOR StatementList	END
 	;
 %%
 extern FILE* yyin;
 main( int argc, char** argv)
 {
-  FILE *myfile = fopen(argv[1], "r");
-  if (!myfile)
-  	return(yyparse());
-  yyin = myfile;
-  do { yyparse();} while(!feof(yyin));
+	FILE *myfile = fopen(argv[1], "r");
+	if (!myfile)
+		return(yyparse());
+	yyin = myfile;
+	do { yyparse();} while(!feof(yyin));
 }
 
 void yyerror( const char* s)
 {
-  //fprintf(stderr, "%s on line %d\n", s, yylineno);
-  fprintf(stderr, "Syntax errors in line %d\n", yylineno);
-  exit(-1);
+	//fprintf(stderr, "%s on line %d\n", s, yylineno);
+	fprintf(stderr, "Syntax errors in line %d\n", yylineno);
+	exit(-1);
 }

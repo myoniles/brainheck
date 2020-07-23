@@ -6,6 +6,7 @@
 %option yylineno
 %%
 
+\n {}
 "+" { return INC; }
 "-" { return DEC; }
 ">" { return LEFT; }
