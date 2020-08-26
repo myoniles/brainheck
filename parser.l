@@ -26,6 +26,6 @@
 "[" { return FOR; }
 "]" { return END; }
 "." { return PRINT; }
-"'" { return READ; }
+"," { return READ; }
 
 %%
