@@ -20,9 +20,9 @@ extern int yylineno;
 
 %start Program
 
-%token INC DEC FOR END PRINT READ LEFT RIGHT
+%token FOR END PRINT READ VAL POS
 
-%type <value> INC DEC LEFT RIGHT Pos Val
+%type <value> VAL POS
 %type <list> StatementList
 %type <exp> Statement Loop
 
@@ -38,20 +38,12 @@ StatementList: StatementList Statement { $$ = new AstListNode($2, $1); }
 Statement
 	: READ	{ $$ = new AstExpressionNode(readc); }
 	| PRINT { $$ = new AstExpressionNode(print); }
-	| Pos   { $$ = new AstExpressionNode(pos_delta, $1); }
-	| Val   { $$ = new AstExpressionNode(val_delta, $1); }
+	| POS   { $$ = new AstExpressionNode(pos_delta, $1); }
+	| VAL   { $$ = new AstExpressionNode(val_delta, $1); }
 	| Loop
 	;
-Pos
-	: LEFT
-	| RIGHT
-	;
-Val
-	: INC
-	| DEC
-	;
 Loop
-	: FOR StatementList	END {$$ =  new AstLoopNode($2); }
+	: FOR StatementList	END { $$ =  new AstLoopNode($2); }
 	;
 %%
 extern FILE* yyin;
