@@ -1,5 +1,5 @@
 FLEXFILE=parser.l
-BISONFILE=parser.y
+BISONFILE=compiler.y
 all: clean flex bison brainheck
 brainheck: clean flex bison comp
 

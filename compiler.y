@@ -22,36 +22,30 @@ extern int yylineno;
 
 %token INC DEC FOR END PRINT READ LEFT RIGHT
 
-%type <value> INC DEC LEFT RIGHT Pos Val PosList ValList ValChange
-%type <list> StatementList
-%type <exp> Statement Loop
-
 %%
-Program: StatementList{
-	if ($1 != NULL)
-		$1->traverse();
-	}
+Program: StatementList
 	;
-StatementList: StatementList Statement { $$ = new AstListNode($2, $1); }
-	| Statement {$$=NULL;}
+StatementList: StatementList Statement
+	| Statement
 	;
 Statement
-	: READ	{ $$ = new AstExpressionNode(readc); }
-	| PRINT { $$ = new AstExpressionNode(print); }
-	| ValChange   { $$ = new AstExpressionNode(val_delta, $1); }
+	: Observant
+	| ValChange
+	;
+Observant
+	: READ
+	| PRINT
 	| Loop
 	;
-
 ValChange
 	: PosList ValList
 	;
 PosList
-	: Pos PosList
-	| Pos
-	| {$$ = 0;}
+	: PosList Pos
+	|
 	;
 ValList
-	: Val ValList
+	: ValList Val
 	| Val
 	;
 Pos
@@ -63,7 +57,7 @@ Val
 	| DEC
 	;
 Loop
-	: FOR StatementList	END {$$ =  new AstLoopNode($2); }
+	: FOR StatementList	END
 	;
 %%
 extern FILE* yyin;
