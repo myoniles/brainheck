@@ -8,20 +8,20 @@
 
 [\t\n ] {}
 
-"+" {
-	yylval.value = 1;
+"+"+ {
+	yylval.value = yyleng;
 	return INC;
 }
-"-" {
-	yylval.value = -1;
+"-"+ {
+	yylval.value = -1 * yyleng;
 	return DEC;
 }
-">" {
-	yylval.value = 1;
+">"+ {
+	yylval.value = yyleng;
 	return RIGHT;
 }
-"<" {
-	yylval.value = -1;
+"<"+ {
+	yylval.value = -1 * yyleng;
 	return LEFT;
 }
 "[" { return FOR; }
