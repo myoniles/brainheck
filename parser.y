@@ -20,7 +20,7 @@ extern int yylineno;
 
 %start Program
 
-%token FOR END PRINT READ VAL POS
+%token FOR END PRINT READ VAL POS INC DEC LEFT RIGHT
 
 %type <value> VAL POS
 %type <list> StatementList
@@ -31,9 +31,10 @@ Program: StatementList{
 	if ($1 != NULL)
 		$1->traverse();
 	}
+	|
 	;
 StatementList: StatementList Statement { $$ = new AstListNode($2, $1); }
-	| {$$=NULL;}
+	| Statement {$$ = NULL;}
 	;
 Statement
 	: READ	{ $$ = new AstExpressionNode(readc); }
@@ -41,6 +42,21 @@ Statement
 	| POS   { $$ = new AstExpressionNode(pos_delta, $1); }
 	| VAL   { $$ = new AstExpressionNode(val_delta, $1); }
 	| Loop
+	| KnownStruct { $$ = new AstExpressionNode(val_delta, 1);}
+	| SingleInc
+	;
+KnownStruct
+	: FOR DEC POS VAL POS VAL POS END
+		{
+			// [->+++>+++++<<] => | 0 | p*3 | p*5 |
+		}
+	| FOR VAL END
+	| FOR POS END
+	;
+SingleInc
+	: INC
+	| RIGHT
+	| LEFT
 	;
 Loop
 	: FOR StatementList	END { $$ =  new AstLoopNode($2); }

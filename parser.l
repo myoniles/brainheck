@@ -14,11 +14,19 @@
 
 ("+"+|"-"+)+ {
 	std::string str(yytext);
-	int neg =
 	yylval.value = yyleng - 2*std::count(str.begin(), str.end(), '-');
-	return VAL;
+	switch (yylval.value) {
+		case -1:
+			return DEC;
+		case  1:
+			return INC;
+		case 0:
+			break;
+		default:
+			return VAL;
+	}
 }
-(">"+|"<"+)+ {
+">"|"<"(">"+|"<"+)+ {
 	std::string str(yytext);
 	yylval.value = yyleng - 2*std::count(str.begin(), str.end(), '<');
 	return POS;
