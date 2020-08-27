@@ -67,16 +67,34 @@ AstExpressionNode::AstExpressionNode()
   this->rightChild = NULL;
 }
 
-AstExpressionNode::AstExpressionNode(AstOp op) :
+AstExpressionNode::AstExpressionNode(int val) :
 AstNode(){
-	this->op = op;
-	this->val = 0;
+	this->val = val;
 }
 
-AstExpressionNode::AstExpressionNode(AstOp op, int val) :
-AstNode(){
-	this->op = op;
-	this->val = val;
+AstExpressionNode operator+ (AstExpressionNode const &node){}
+void AstExpressionNode::traverse(){};
+
+AstValueNode::AstValueNode():AstExpressionNode(0){}
+AstValueNode::AstValueNode( int val ):AstExpressionNode(val){}
+
+void AstValueNode::traverse(){
+	*ptr += val;
+}
+
+AstPositionNode::AstPositionNode():AstExpressionNode(0){}
+AstPositionNode::AstPositionNode( int val ):AstExpressionNode(val){}
+
+void AstPositionNode::traverse(){
+	ptr += val;
+}
+
+void AstPrintNode::traverse(){
+	printf("%c", *ptr);
+}
+
+void AstReadNode::traverse(){
+	*ptr = getchar();
 }
 
 void printbyte(char a){
@@ -85,25 +103,6 @@ void printbyte(char a){
 			printf("%d", !!((a << i) & 0x80));
 	}
 	printf(" ");
-}
-
-void AstExpressionNode::traverse(){
-	switch (op){
-		case val_delta:
-			*ptr += val;
-			break;
-		case pos_delta:
-			ptr += val;
-			break;
-		case print:
-			//printbyte(*ptr);
-			printf("%c", *ptr);
-			break;
-		case readc:
-			*ptr = getchar();
-			break;
-	}
-	//status_update();
 }
 
 AstLoopNode::AstLoopNode(AstListNode* inside):AstNode(){this->inside = inside;}
@@ -116,5 +115,4 @@ void AstLoopNode::traverse(){
 		inside->traverse();
 	}
 }
-
 #endif

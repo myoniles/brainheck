@@ -18,29 +18,46 @@ class AstNode{
 		AstNode* rightChild;
 };
 
-enum AstOp {
-	val_delta,
-	pos_delta,
-	print,
-	readc
+class AstListNode : public AstNode {
+	public:
+		AstListNode( );
+		AstListNode( AstNode* exp, AstListNode* next);
+		void traverse();
+};
+
+class AstPrintNode : public AstNode {
+	public:
+		void traverse();
+};
+
+class AstReadNode : public AstNode {
+	public:
+		void traverse();
 };
 
 class AstExpressionNode : public AstNode {
 	public:
 		AstExpressionNode( );
-		AstExpressionNode( AstOp op );
-		AstExpressionNode( AstOp op , int val );
-		void traverse();
+		AstExpressionNode( int val );
+		virtual void traverse();
+
+		AstExpressionNode& operator+ (AstExpressionNode const &node);
 
 	protected:
-		AstOp op;
 		int val;
 };
 
-class AstListNode : public AstNode {
+class AstValueNode : public AstExpressionNode {
 	public:
-		AstListNode( );
-		AstListNode( AstNode* exp, AstListNode* next);
+		AstValueNode( );
+		AstValueNode( int val );
+		void traverse();
+};
+
+class AstPositionNode : public AstExpressionNode {
+	public:
+		AstPositionNode( );
+		AstPositionNode( int val );
 		void traverse();
 };
 
