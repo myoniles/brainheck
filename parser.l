@@ -14,7 +14,6 @@
 
 ("+"+|"-"+)+ {
 	std::string str(yytext);
-	int neg =
 	yylval.value = yyleng - 2*std::count(str.begin(), str.end(), '-');
 	return VAL;
 }

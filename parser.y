@@ -27,13 +27,22 @@ extern int yylineno;
 %type <exp> Statement Loop
 
 %%
-Program: StatementList{
-	if ($1 != NULL)
-		$1->traverse();
-	}
+Program: StatementList
+		{
+			if ($1 != NULL)
+				$1->traverse();
+		}
 	;
-StatementList: StatementList Statement { $$ = new AstListNode($2, $1); }
-	| {$$=NULL;}
+StatementList
+	: StatementList Statement
+		{
+			$$ = new AstListNode($2, $1);
+			delete $1;
+		}
+	| Statement
+		{
+			$$=new AstListNode($1);
+		}
 	;
 Statement
 	: READ	{ $$ = new AstReadNode(); }

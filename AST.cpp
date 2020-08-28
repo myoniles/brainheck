@@ -1,6 +1,7 @@
 #include "AST.h"
 #include <cstddef>
 #include <stdio.h>
+#include <list> // We use lists because we do not need random access and iterators will not be invalidated by changing
 
 #ifndef AST
 #define AST
@@ -15,56 +16,40 @@ void status_update(){
 	printf("current ptr:\t%p,\tcurrent *ptr:\t%d\n", ptr, *ptr);
 }
 
-AstNode::AstNode(AstNode* leftNode, AstNode* rightNode)
-{
-  this->leftChild = leftNode;
-  this->rightChild = rightNode;
-}
-
 AstNode::AstNode()
 {
-  this->leftChild =  NULL;
-  this->rightChild = NULL;
-}
-
-void AstNode::setLeftChild( AstNode* node )
-{
-  this->leftChild = node;
 }
 
 void AstNode::setLineno( int i )
 {
-  this->lineno = i;
-}
-
-void AstNode::setRightChild( AstNode* node )
-{
-  this->rightChild = node;
+	this->lineno = i;
 }
 
 AstListNode::AstListNode()
 :AstNode()
 {
-  this->leftChild =  NULL;
-  this->rightChild = NULL;
 }
 
+AstListNode::AstListNode(AstNode* exp)
+:AstNode()
+{
+	children.push_back(exp);
+}
 
 AstListNode::AstListNode(AstNode* exp, AstListNode* next) :
-AstNode(exp, next){
+AstNode(){
+	children = next->children;
+	children.push_back(exp);
 }
 
 void AstListNode::traverse(){
-	if ( rightChild )
-		rightChild->traverse();
-	leftChild ->traverse();
+	for (AstNode* child : children)
+		child->traverse();
 }
 
 AstExpressionNode::AstExpressionNode()
 :AstNode()
 {
-  this->leftChild =  NULL;
-  this->rightChild = NULL;
 }
 
 AstExpressionNode::AstExpressionNode(int val) :

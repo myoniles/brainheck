@@ -1,3 +1,5 @@
+#include <list> // We use lists because we do not need random access and iterators will not be invalidated by changing
+
 #ifndef AST_H
 #define AST_H
 
@@ -6,22 +8,20 @@ class AstNode{
 		int lineno;
 
 		AstNode();
-		AstNode( AstNode* leftNode, AstNode* rightNode);
 
 		virtual void traverse() = 0;
-		void setLeftChild( AstNode* node );
-		void setRightChild( AstNode* node );
+		void appendChild( AstNode* node );
 		void setLineno(int i);
 
 	protected:
-		AstNode* leftChild;
-		AstNode* rightChild;
+		std::list<AstNode*> children;
 };
 
 class AstListNode : public AstNode {
 	public:
 		AstListNode( );
-		AstListNode( AstNode* exp, AstListNode* next);
+		AstListNode(AstNode* exp);
+		AstListNode(AstNode* exp, AstListNode* list);
 		void traverse();
 };
 
