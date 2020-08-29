@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
-#include "parser.h"
+#include "../lib/parser.h"
 %}
 %option yylineno
 %%

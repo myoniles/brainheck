@@ -1,7 +1,6 @@
-scanner.cpp
+# ignore everything in lib bin and build
+build/
+lib/*
+bin/*
+
 parser.output
-parser.h
-examples
-parser
-interpreter
-parser.cpp

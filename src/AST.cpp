@@ -1,4 +1,4 @@
-#include "AST.h"
+#include "../include/AST.h"
 #include <cstddef>
 #include <stdio.h>
 #include <list> // We use lists because we do not need random access and iterators will not be invalidated by changing

@@ -1,6 +1,6 @@
 %code requires {
 	#define DEFAULT_MEM 30000
-	#include "AST.h"
+	#include "../include/AST.h"
 }
 
 %{
